@@ -17,10 +17,11 @@
     instance.exports.listgen();
 
     const offset = instance.exports.get_offset();
+    const size = instance.exports.get_used();
 
-    const buffer = new Int32Array(instance.exports.memory.buffer, offset, 1024);
+    const buffer = new Int32Array(instance.exports.memory.buffer, offset, size);
     let s = "";
-    for (let i = 0; i < 13; ++i) {
+    for (let i = 0; i < size; ++i) {
         s += String.fromCharCode(buffer[i]);
     }
     console.log(s);
