@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<head>
+<script type="module">
+  async function init() {
+    const { instance } = await WebAssembly.instantiateStreaming(
+      fetch("./listgen.wasm"),
+      {
+        env: {
+            log(arg) { console.log(arg); },
+        },
+      },
+      {
+        builtins: ["js-string"],
+      }
+    );
+
+    instance.exports.listgen();
+
+    const offset = instance.exports.get_offset();
+
+    const buffer = new Int32Array(instance.exports.memory.buffer, offset, 1024);
+    let s = "";
+    for (let i = 0; i < 13; ++i) {
+        s += String.fromCharCode(buffer[i]);
+    }
+    console.log(s);
+
+    document.getElementById("content").innerHTML = s;
+  }
+  init();
+</script>
+</head>
+<body>
+<div id="content"/>
+</body>
