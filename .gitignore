@@ -1,3 +1,6 @@
 *.wasm
 *.o
 *.png
+
+wasi-sdk/*
+build/*

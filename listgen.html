@@ -3,11 +3,17 @@
 <script type="module">
   async function init() {
     const { instance } = await WebAssembly.instantiateStreaming(
-      fetch("./listgen.wasm"),
+      fetch("./build/listgen.wasm"),
       {
         env: {
-            log(arg) { console.log(arg); },
+          log(arg) { console.log(arg); },
         },
+        wasi_snapshot_preview1: {
+          // TODO
+          args_get() {},
+          args_sizes_get() {},
+          proc_exit() {}
+        }
       },
       {
         builtins: ["js-string"],

@@ -1,8 +1,10 @@
-#include "string.h"
+#include <cstring>
+
+#include "toml++/toml.hpp"
 
 extern "C" {
 __attribute__((import_name("log")))
-extern void log(int);
+extern void js_log(int);
 }
 
 constexpr const int SIZE = 1024;
@@ -26,4 +28,5 @@ void listgen() {
     const int string_length = strlen(string);
     memcpy(buffer, string, string_length);
     used = string_length;
+    js_log(1);
 }
