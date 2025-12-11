@@ -1,6 +1,6 @@
 #include <cstring>
 
-#include "toml++/toml.hpp"
+#include <toml++/toml.hpp>
 
 extern "C" {
 __attribute__((import_name("log")))
@@ -28,5 +28,8 @@ void listgen() {
     const int string_length = strlen(string);
     memcpy(buffer, string, string_length);
     used = string_length;
+}
+
+int main() {
     js_log(1);
 }

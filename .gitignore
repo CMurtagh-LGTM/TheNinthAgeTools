@@ -3,4 +3,8 @@
 *.png
 
 wasi-sdk/*
-build/*
+build_wasm/*
+build_linux/*
+.cache/
+
+compile_commands.json
