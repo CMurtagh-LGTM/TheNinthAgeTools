@@ -12,18 +12,11 @@ FetchContent_Declare(
     GIT_TAG v3.4.0
     GIT_SHALLOW TRUE
 )
-# FetchContent_Declare(
-#     webgpu-headers
-#     GIT_REPOSITORY https://github.com/webgpu-native/webgpu-headers.git
-#     GIT_TAG main
-#     GIT_SHALLOW TRUE
-#     SOURCE_SUBDIR NONE
-# )
-# FetchContent_MakeAvailable(webgpu-headers tomlplusplus)
+FetchContent_MakeAvailable(tomlplusplus)
 
 add_executable(listgen src/listgen.cpp)
 target_include_directories(listgen PUBLIC include)
-target_compile_options(listgen PRIVATE -Wall -Wextra -Wpedantic -flto)
+target_compile_options(listgen PRIVATE -Wall -Wextra -Wpedantic -flto -fno-exceptions)
 set_target_properties(listgen PROPERTIES
     CXX_STANDARD 23
     CXX_STANDARD_REQUIRED ON
@@ -32,6 +25,4 @@ set_target_properties(listgen PROPERTIES
 )
 
 target_link_libraries(listgen PRIVATE tomlplusplus::tomlplusplus)
-# target_include_directories(listgen SYSTEM PRIVATE
-#   "${FETCHCONTENT_BASE_DIR}/webgpu-headers-src/"
-# )
+

@@ -20,10 +20,12 @@
       }
     );
 
-    instance.exports.listgen();
+    instance.exports._start();
 
     const offset = instance.exports.get_offset();
     const size = instance.exports.get_used();
+
+    console.log(offset, size);
 
     const buffer = new Int32Array(instance.exports.memory.buffer, offset, size);
     let s = "";

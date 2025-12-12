@@ -22,14 +22,12 @@ int get_used() {
   return used;
 }
 
-__attribute__((export_name("listgen")))
-void listgen() {
-    const char* string = "<img src=\"./pics/logo_character.png\"/>";
-    const int string_length = strlen(string);
-    memcpy(buffer, string, string_length);
-    used = string_length;
-}
-
 int main() {
-    js_log(1);
+  const char* string = "<img src=\"./pics/logo_character.png\"/>";
+  const int string_length = strlen(string);
+  memcpy(buffer, string, string_length);
+  used = string_length;
+
+  js_log(reinterpret_cast<uintptr_t>(buffer));
+  js_log(used);
 }
