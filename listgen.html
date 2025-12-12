@@ -27,10 +27,10 @@
 
     console.log(offset, size);
 
-    const buffer = new Int32Array(instance.exports.memory.buffer, offset, size);
+    const buffer = new Int8Array(instance.exports.memory.buffer, offset, size);
     let s = "";
     for (let i = 0; i < size; ++i) {
-        s += String.fromCharCode(buffer[i]);
+      s += String.fromCharCode(buffer[i]);
     }
     console.log(s);
 
