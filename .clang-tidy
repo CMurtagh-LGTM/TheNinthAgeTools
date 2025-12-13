@@ -1,0 +1,3 @@
+WarningsAsErrors: '*'
+HeaderFilterRegex: '.*\.hpp'
+FormatStyle: file

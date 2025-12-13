@@ -1,38 +1,42 @@
 <!DOCTYPE html>
 <head>
 <script type="module">
+  function c_string(memory_buffer, offset, size) {
+    const buffer = new Int8Array(memory_buffer, offset, size);
+    let string = "";
+    for (let i = 0; i < size; ++i) {
+      string += String.fromCharCode(buffer[i]);
+    }
+    return string;
+  }
+
   async function init() {
+    let memory_buffer;
     const { instance } = await WebAssembly.instantiateStreaming(
-      fetch("./build_wasm/listgen.wasm"),
+      fetch("./build_wasm/listgen_opt.wasm"),
       {
         env: {
-          log(arg) { console.log(arg); },
+          log(arg1, arg2) { console.log(c_string(memory_buffer, arg1, arg2)); },
+        },
+        dom: {
+          get_by_id(arg1, arg2) {},
         },
         wasi_snapshot_preview1: {
-          // TODO
-          args_get() {},
-          args_sizes_get() {},
-          proc_exit() {}
-        }
-      },
-      {
-        builtins: ["js-string"],
+          fd_close(arg) {},
+          fd_seek(arg1, arg2, arg3, arg4) {},
+          fd_write(arg1, arg2, arg3, arg4) {},
+          proc_exit(arg) {},
+        },
       }
     );
 
+    memory_buffer = instance.exports.memory.buffer;
     instance.exports._start();
 
     const offset = instance.exports.get_offset();
     const size = instance.exports.get_used();
 
-    console.log(offset, size);
-
-    const buffer = new Int8Array(instance.exports.memory.buffer, offset, size);
-    let s = "";
-    for (let i = 0; i < size; ++i) {
-      s += String.fromCharCode(buffer[i]);
-    }
-    console.log(s);
+    let s = c_string(memory_buffer, offset, size);
 
     document.getElementById("content").innerHTML = s;
   }

@@ -1,33 +1,34 @@
+#include "wasm.hpp"
+
+#include "dom.hpp"
+
 #include <cstring>
-
+#include <string>
 #include <toml++/toml.hpp>
-
-extern "C" {
-__attribute__((import_name("log")))
-extern void js_log(int);
-}
 
 constexpr const int SIZE = 1024;
 int buffer[SIZE];
 
 int used = 0;
 
-__attribute__((export_name("get_offset")))
+WASM_EXPORT("get_offset")
 int* get_offset() {
   return buffer;
 }
 
-__attribute__((export_name("get_used")))
+WASM_EXPORT("get_used")
 int get_used() {
   return used;
 }
 
 int main() {
   const char* string = "<img src=\"./pics/logo_character.png\"/>";
-  const int string_length = strlen(string);
+  const size_t string_length = strlen(string);
   memcpy(buffer, string, string_length);
   used = string_length;
 
-  js_log(reinterpret_cast<uintptr_t>(buffer));
-  js_log(used);
+  wasm::log(reinterpret_cast<const char *>(buffer), string_length);
+
+  auto c = dom::get_by_id("content");
 }
+

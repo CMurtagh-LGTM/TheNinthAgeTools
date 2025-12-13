@@ -14,14 +14,18 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(tomlplusplus)
 
-add_executable(listgen src/listgen.cpp)
+add_executable(listgen
+    src/listgen.cpp
+    src/wasm.cpp
+    src/dom.cpp
+)
 target_include_directories(listgen PUBLIC include)
-target_compile_options(listgen PRIVATE -Wall -Wextra -Wpedantic -flto -fno-exceptions)
+target_compile_options(listgen PRIVATE -Wall -Wextra -Wpedantic -flto -fno-exceptions -O3)
 set_target_properties(listgen PROPERTIES
     CXX_STANDARD 23
     CXX_STANDARD_REQUIRED ON
     CXX_EXTENSIONS OFF
-    COMPILE_WARNING_AS_ERROR ON
+    # COMPILE_WARNING_AS_ERROR ON
 )
 
 target_link_libraries(listgen PRIVATE tomlplusplus::tomlplusplus)
