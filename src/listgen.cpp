@@ -22,13 +22,27 @@ int get_used() {
 }
 
 int main() {
-  const char* string = "<img src=\"./pics/logo_character.png\"/>";
-  const size_t string_length = strlen(string);
-  memcpy(buffer, string, string_length);
-  used = string_length;
 
-  wasm::log(reinterpret_cast<const char *>(buffer), string_length);
+  auto content = dom::get_by_id("content");
+  auto img = dom::append_img_child(content);
+  dom::set_img_src(img, "./pics/logo_character.png");
 
-  auto c = dom::get_by_id("content");
+  using namespace std::string_view_literals;
+  static constexpr auto source = R"(
+      str = "hello world"
+
+      numbers = [ 1, 2, 3, "four", 5.0 ]
+      vegetables = [ "tomato", "onion", "mushroom", "lettuce" ]
+      minerals = [ "quartz", "iron", "copper", "diamond" ]
+
+      [animals]
+      cats = [ "tiger", "lion", "puma" ]
+      birds = [ "macaw", "pigeon", "canary" ]
+      fish = [ "salmon", "trout", "carp" ]
+  )"sv;
+  auto tbl = toml::parse(source);
+
+  std::string_view str = tbl["str"].value_or(""sv);
+  wasm::log(str);
 }
 

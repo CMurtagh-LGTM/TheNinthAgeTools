@@ -29,6 +29,9 @@ void log(const char* string, size_t length) {
 void log(const std::string& string) {
   wasm::log(string.data(), string.length());
 }
+void log(const std::string_view string) {
+  wasm::log(string.data(), string.length());
+}
 void log(int number){
   wasm::log(int_to_string(number));
 }

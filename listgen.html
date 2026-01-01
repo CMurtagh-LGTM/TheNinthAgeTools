@@ -13,32 +13,47 @@
   async function init() {
     let memory_buffer;
     const { instance } = await WebAssembly.instantiateStreaming(
-      fetch("./build_wasm/listgen_opt.wasm"),
+      fetch("./build_wasm/listgen.wasm"),
       {
         env: {
-          log(arg1, arg2) { console.log(c_string(memory_buffer, arg1, arg2)); },
+          log(offset, size) { console.log(c_string(memory_buffer, offset, size)); },
         },
         dom: {
-          get_by_id(arg1, arg2) {},
+          get_by_id(offset, size) { return document.getElementById(c_string(memory_buffer, offset, size)) },
+          append_child(node_parent, offset, size) {
+            let node = document.createElement(c_string(memory_buffer, offset, size));
+            node_parent.appendChild(node);
+            return node;
+          },
+          set_img_src(img, offset, size) {
+            img.src = c_string(memory_buffer, offset, size);
+          },
         },
         wasi_snapshot_preview1: {
+          environ_get (arg1, arg2) {},
+          environ_sizes_get (arg1, arg2) {},
           fd_close(arg) {},
+          fd_prestat_get(arg1, arg2) {},
+          fd_prestat_dir_name(arg1, arg2, arg3) {},
           fd_seek(arg1, arg2, arg3, arg4) {},
           fd_write(arg1, arg2, arg3, arg4) {},
           proc_exit(arg) {},
         },
-      }
+      },
+      {
+        builtins: ["js-string"],
+      },
     );
 
     memory_buffer = instance.exports.memory.buffer;
     instance.exports._start();
 
-    const offset = instance.exports.get_offset();
-    const size = instance.exports.get_used();
+    // const offset = instance.exports.get_offset();
+    // const size = instance.exports.get_used();
 
-    let s = c_string(memory_buffer, offset, size);
+    // let s = c_string(memory_buffer, offset, size);
 
-    document.getElementById("content").innerHTML = s;
+    // document.getElementById("content").innerHTML = s;
   }
   init();
 </script>
