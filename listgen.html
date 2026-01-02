@@ -20,6 +20,9 @@
         },
         dom: {
           get_by_id(offset, size) { return document.getElementById(c_string(memory_buffer, offset, size)) },
+          set_text(node, offset, size) {
+            node.textContent = c_string(memory_buffer, offset, size);
+          },
           append_child(node_parent, offset, size) {
             let node = document.createElement(c_string(memory_buffer, offset, size));
             node_parent.appendChild(node);
@@ -47,13 +50,6 @@
 
     memory_buffer = instance.exports.memory.buffer;
     instance.exports._start();
-
-    // const offset = instance.exports.get_offset();
-    // const size = instance.exports.get_used();
-
-    // let s = c_string(memory_buffer, offset, size);
-
-    // document.getElementById("content").innerHTML = s;
   }
   init();
 </script>

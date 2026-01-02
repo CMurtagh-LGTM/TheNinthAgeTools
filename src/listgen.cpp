@@ -6,26 +6,16 @@
 #include <string>
 #include <toml++/toml.hpp>
 
-constexpr const int SIZE = 1024;
-int buffer[SIZE];
-
-int used = 0;
-
-WASM_EXPORT("get_offset")
-int* get_offset() {
-  return buffer;
-}
-
-WASM_EXPORT("get_used")
-int get_used() {
-  return used;
-}
-
 int main() {
 
   auto content = dom::get_by_id("content");
   auto img = dom::append_img_child(content);
   dom::set_img_src(img, "./pics/logo_character.png");
+
+  auto table = dom::append_table_child(content);
+  auto tr = dom::append_tr_child(table);
+  auto td = dom::append_td_child(tr);
+  dom::set_text(td, "cool");
 
   using namespace std::string_view_literals;
   static constexpr auto source = R"(

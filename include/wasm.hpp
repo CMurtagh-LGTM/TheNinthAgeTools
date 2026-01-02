@@ -17,7 +17,6 @@ extern void log(const char* string, size_t length);
 }
 
 void log(const char* string, size_t length);
-void log(const std::string& string);
 void log(const std::string_view string);
 void log(int number);
 

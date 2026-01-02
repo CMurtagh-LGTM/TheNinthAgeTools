@@ -26,9 +26,6 @@ std::string int_to_string(int number) {
 void log(const char* string, size_t length) {
   internal::log(string, length);
 }
-void log(const std::string& string) {
-  wasm::log(string.data(), string.length());
-}
 void log(const std::string_view string) {
   wasm::log(string.data(), string.length());
 }
