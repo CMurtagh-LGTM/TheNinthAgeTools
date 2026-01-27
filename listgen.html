@@ -1,5 +1,20 @@
 <!DOCTYPE html>
 <head>
+<style>
+.popover {
+  margin: 0;
+  top: calc(anchor(bottom) + 5px);
+}
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  outline: inherit;
+  cursor: pointer;
+  font-weight: bold;
+}
+</style>
 <script type="module">
   function c_string(memory_buffer, offset, size) {
     const buffer = new Int8Array(memory_buffer, offset, size);
@@ -23,6 +38,12 @@
           set_text(node, offset, size) {
             node.textContent = c_string(memory_buffer, offset, size);
           },
+          set_id(node, offset, size) {
+            node.id = c_string(memory_buffer, offset, size);
+          },
+          add_class(node, offset, size) {
+            node.classList.add(c_string(memory_buffer, offset, size));
+          },
           append_child(node_parent, offset, size) {
             let node = document.createElement(c_string(memory_buffer, offset, size));
             node_parent.appendChild(node);
@@ -30,6 +51,12 @@
           },
           set_img_src(img, offset, size) {
             img.src = c_string(memory_buffer, offset, size);
+          },
+          set_popover(node) {
+            node.popover = "auto";
+          },
+          set_popover_target(node, popover) {
+            node.popoverTargetElement = popover;
           },
         },
         wasi_snapshot_preview1: {

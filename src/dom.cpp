@@ -10,6 +10,14 @@ void set_text(node_t node, const std::string_view string) {
   internal::set_text(node, string.data(), string.length());
 }
 
+void set_id(node_t node, const std::string_view id) {
+  internal::set_id(node, id.data(), id.length());
+}
+
+void add_class(node_t node, const std::string_view class_name) {
+  internal::add_class(node, class_name.data(), class_name.length());
+}
+
 node_t append_img_child(node_t node_parent) {
   static constexpr std::string name = "img";
   return internal::append_child(node_parent, name.data(), name.length());
@@ -34,5 +42,27 @@ node_t append_td_child(node_t node_parent) {
   return internal::append_child(node_parent, name.data(), name.length());
 }
 
+node_t append_div_child(node_t node_parent) {
+  static constexpr std::string name = "div";
+  return internal::append_child(node_parent, name.data(), name.length());
+}
+
+node_t append_span_child(node_t node_parent) {
+  static constexpr std::string name = "span";
+  return internal::append_child(node_parent, name.data(), name.length());
+}
+
+node_t append_button_child(node_t node_parent) {
+  static constexpr std::string name = "button";
+  return internal::append_child(node_parent, name.data(), name.length());
+}
+
+void set_popover(node_t node) {
+  internal::set_popover(node);
+}
+
+void set_popover_target(node_t node, node_t popover) {
+  internal::set_popover_target(node, popover);
+}
 
 }
