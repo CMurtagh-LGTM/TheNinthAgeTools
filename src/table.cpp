@@ -138,24 +138,33 @@ void add_rules_entry(const toml::table& model_rules,
   }
 }
 
-void add_row(const toml::table& model_rules,
-             const toml::node_view<const toml::node>& book_entry,
-             const entries_t entry_descriptions, dom::node_t table,
-             const std::string_view row_name) {
+void add_header(const entries_t entry_descriptions, const dom::node_t table) {
   auto header = dom::append_tr_child(table);
   dom::add_class(header, "header_tr");
-  auto data = dom::append_tr_child(table);
 
   {
     auto header_td = dom::append_td_child(header);
     dom::set_text(header_td, entry_descriptions.name);
-    auto data_td = dom::append_td_child(data);
-    dom::set_text(data_td, row_name);
   }
 
   for (const auto& entry_description : entry_descriptions.entries) {
     auto header_td = dom::append_td_child(header);
     dom::set_text(header_td, entry_description.name);
+  }
+}
+
+void add_row(const toml::table& model_rules,
+             const toml::node_view<const toml::node>& book_entry,
+             const entries_t entry_descriptions, dom::node_t table,
+             const std::string_view row_name) {
+  auto data = dom::append_tr_child(table);
+
+  {
+    auto data_td = dom::append_td_child(data);
+    dom::set_text(data_td, row_name);
+  }
+
+  for (const auto& entry_description : entry_descriptions.entries) {
     auto data_td = dom::append_td_child(data);
     switch (entry_description.entry_kind) {
       case entry_kind_e::EMPTY:
@@ -180,9 +189,12 @@ void add_table(const toml::table& model_rules, const toml::table& book,
 
   auto table = dom::append_table_child(content);
 
+  add_header(global_entry_descriptions, table);
   add_row(model_rules, book_entry, global_entry_descriptions, table, "");
+  add_header(defensive_entry_descriptions, table);
   add_row(model_rules, book_entry, defensive_entry_descriptions, table, "");
 
+  add_header(offensive_entry_descriptions, table);
   if(const toml::array* offensive_array = book_entry["offensive"].as_array()){
     for(auto&& offensive_entry: *offensive_array){
       const toml::node_view<const toml::node>& view = static_cast<const toml::node_view<const toml::node>>(offensive_entry);
