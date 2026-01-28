@@ -8,7 +8,7 @@
 
 namespace table {
 
-enum class entry_kind_e { EMPTY, NORMAL, DISTANCE, RULES };
+enum class entry_kind_e { EMPTY, NUMBER, DISTANCE, RULES };
 
 struct entry_t {
   std::string_view name;
@@ -26,7 +26,7 @@ constexpr entries_t global_entry_descriptions = {
     {{
         {"Cha", "cha", entry_kind_e::DISTANCE},
         {"Mob", "mob", entry_kind_e::DISTANCE},
-        {"Dis", "dis", entry_kind_e::NORMAL},
+        {"Dis", "dis", entry_kind_e::NUMBER},
         {"", "", entry_kind_e::EMPTY},
         {"", "", entry_kind_e::EMPTY},
         {"Model Rules", "model_rules", entry_kind_e::RULES},
@@ -35,10 +35,10 @@ constexpr entries_t global_entry_descriptions = {
 constexpr entries_t defensive_entry_descriptions = {
     "Defensive",
     {{
-        {"HP", "hp", entry_kind_e::NORMAL},
-        {"Def", "def", entry_kind_e::NORMAL},
-        {"Res", "res", entry_kind_e::NORMAL},
-        {"Arm", "arm", entry_kind_e::NORMAL},
+        {"HP", "hp", entry_kind_e::NUMBER},
+        {"Def", "def", entry_kind_e::NUMBER},
+        {"Res", "res", entry_kind_e::NUMBER},
+        {"Arm", "arm", entry_kind_e::NUMBER},
         {"", "", entry_kind_e::EMPTY},
         {"", "", entry_kind_e::EMPTY},
     }}};
@@ -46,11 +46,11 @@ constexpr entries_t defensive_entry_descriptions = {
 constexpr entries_t offensive_entry_descriptions = {
     "Offensive",
     {{
-        {"Att", "att", entry_kind_e::NORMAL},
-        {"Off", "off", entry_kind_e::NORMAL},
-        {"Str", "str", entry_kind_e::NORMAL},
-        {"AP", "ap", entry_kind_e::NORMAL},
-        {"Agi", "agi", entry_kind_e::NORMAL},
+        {"Att", "att", entry_kind_e::NUMBER},
+        {"Off", "off", entry_kind_e::NUMBER},
+        {"Str", "str", entry_kind_e::NUMBER},
+        {"AP", "ap", entry_kind_e::NUMBER},
+        {"Agi", "agi", entry_kind_e::NUMBER},
         {"Attack Attributes, Weapons and Properties", "offensive_rules",
          entry_kind_e::RULES},
     }}};
@@ -96,16 +96,18 @@ void add_text_with_popovers(const toml::table& model_rules, dom::node_t node,
   }
 }
 
-void add_normal_entry(const toml::node_view<const toml::node>& book_entry,
+void add_number_entry(const toml::node_view<const toml::node>& book_entry,
                       const std::string_view key, dom::node_t data) {
   int value = book_entry[key].value_or(0);
   dom::set_text(data, std::format("{}", value));
+  dom::add_class(data, "td_number");
 }
 
 void add_distance_entry(const toml::node_view<const toml::node>& book_entry,
                         const std::string_view key, dom::node_t data) {
   int value = book_entry[key].value_or(0);
   dom::set_text(data, std::format("{}\"", value));
+  dom::add_class(data, "td_number");
 }
 
 void add_rules_entry(const toml::table& model_rules,
@@ -169,8 +171,8 @@ void add_row(const toml::table& model_rules,
     switch (entry_description.entry_kind) {
       case entry_kind_e::EMPTY:
         break;
-      case entry_kind_e::NORMAL:
-        add_normal_entry(book_entry, entry_description.key, data_td);
+      case entry_kind_e::NUMBER:
+        add_number_entry(book_entry, entry_description.key, data_td);
         break;
       case entry_kind_e::DISTANCE:
         add_distance_entry(book_entry, entry_description.key, data_td);
@@ -182,12 +184,9 @@ void add_row(const toml::table& model_rules,
   }
 }
 
-void add_table(const toml::table& model_rules, const toml::table& book,
-               const std::string_view name) {
-  auto content = dom::get_by_id("content");
-  auto book_entry = book[name];
+void add_table(const toml::table& model_rules, const toml::node_view<const toml::node>& book_entry, dom::node_t node) {
 
-  auto table = dom::append_table_child(content);
+  auto table = dom::append_table_child(node);
 
   add_header(global_entry_descriptions, table);
   add_row(model_rules, book_entry, global_entry_descriptions, table, "");
@@ -201,6 +200,40 @@ void add_table(const toml::table& model_rules, const toml::table& book,
       add_row(model_rules, view, offensive_entry_descriptions, table, view["name"].value_or(""));
     }
   }
+}
+
+void add_unit_header(const toml::node_view<const toml::node>& book_entry, dom::node_t node, const std::string_view name) {
+  auto header = dom::append_div_child(node);
+  dom::add_class(header, "header_grid");
+
+  auto img = dom::append_img_child(header);
+  dom::add_class(img, "unit_icon");
+  dom::set_img_src(img, "./pics/logo_character.png");
+  
+  auto name_div = dom::append_div_child(header);
+  dom::add_class(name_div, "unit_name");
+  dom::set_text(name_div, name);
+  auto base_div = dom::append_div_child(header);
+  dom::set_text(base_div, std::format("Base: {} mm", book_entry["base"].value_or("0")));
+  auto points_div = dom::append_div_child(header);
+  dom::set_text(points_div, std::format("{} pts", book_entry["points"].value_or(0)));
+  auto models_div = dom::append_div_child(header);
+  dom::set_text(models_div, std::format("{} models", book_entry["model_count"].value_or(0)));
+  auto rarity_div = dom::append_div_child(header);
+  dom::set_text(rarity_div, std::format("Rarity {}", book_entry["rarity"].value_or("0")));
+  auto height_div = dom::append_div_child(header);
+  dom::set_text(height_div, std::format("Height {}", book_entry["height"].value_or(0)));
+}
+
+void add_unit(const toml::table& model_rules, const toml::table& book,
+               const std::string_view name) {
+  auto content = dom::get_by_id("content");
+  auto book_entry = book[name];
+
+  auto div = dom::append_div_child(content);
+  
+  add_unit_header(book_entry, div, name);
+  add_table(model_rules, book_entry, div);
 }
 
 }  // namespace table

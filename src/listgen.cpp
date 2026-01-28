@@ -9,6 +9,11 @@ int main() {
   using namespace std::string_view_literals;
   static constexpr auto source = R"(
     [Marshal]
+    points = 60
+    model_count = 1
+    rarity = "Common"
+    base = "20x20"
+    height = 1
     cha = 4
     mob = 4
     dis = 8
@@ -36,5 +41,5 @@ int main() {
     wasm::log("failed to parse toml book");
     return 0;
   }
-  table::add_table(model_rules, book, "Marshal");
+  table::add_unit(model_rules, book, "Marshal");
 }

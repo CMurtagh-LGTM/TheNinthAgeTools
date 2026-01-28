@@ -21,3 +21,19 @@
   color: grey;
   font-style: italic;
 }
+.td_number {
+  text-align: center;
+}
+
+.header_grid {
+  display: grid;
+  grid-template-columns: 55px 2fr 1fr 1fr 1fr;
+}
+.unit_name {
+  font-weight: bold;
+  grid-column: span 3;
+}
+.unit_icon {
+  width: 50px;
+  grid-row: span 2;
+}

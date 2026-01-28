@@ -5,7 +5,7 @@
 
 namespace table {
 
-void add_table(const toml::table &model_rules, const toml::table &book,
+void add_unit(const toml::table &model_rules, const toml::table &book,
                const std::string_view name);
 
 }
