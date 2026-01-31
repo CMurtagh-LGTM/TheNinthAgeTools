@@ -47,7 +47,6 @@ node_t append_span_child(node_t node_parent);
 
 node_t append_button_child(node_t node_parent);
 
-void set_popover(node_t node);
-void set_popover_target(node_t node, node_t popover);
+dom::node_t append_popover_child(dom::node_t node);
 
 }

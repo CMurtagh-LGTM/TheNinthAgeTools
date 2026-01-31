@@ -65,4 +65,12 @@ void set_popover_target(node_t node, node_t popover) {
   internal::set_popover_target(node, popover);
 }
 
+dom::node_t append_popover_child(dom::node_t node) {
+  auto popover = dom::append_div_child(node);
+  dom::set_popover(popover);
+  dom::add_class(popover, "popover");
+  dom::set_popover_target(node, popover);
+  return popover;
+}
+
 }

@@ -38,6 +38,10 @@ void log(int number){
   wasm::log(int_to_string(number));
 }
 
+
+TableRef::TableRef(): index(NULL_REF) {
+}
+
 TableRef::TableRef(externref_t externref) {
   index = next_free;
   assert(!used_elements[index]);
@@ -57,15 +61,34 @@ TableRef::TableRef(externref_t externref) {
   __builtin_wasm_table_set(ref_table, index, externref);
 }
 
+
+TableRef::TableRef(TableRef&& other) : index(other.index) {
+  other.index = NULL_REF;
+}
+
+TableRef& TableRef::operator=(TableRef&& other) {
+  index = other.index;
+  other.index = NULL_REF;
+  return *this;
+}
+
 TableRef::~TableRef() {
+  if (index == NULL_REF) {
+    return;
+  }
   used_elements[index] = false;
   next_free = std::min(next_free, index);
 }
 
 externref_t TableRef::operator*() {
+  assert(index != NULL_REF);
   externref_t retval = __builtin_wasm_table_get(ref_table, index);
 
   return retval;
+}
+
+TableRef::operator bool() const {
+  return index != NULL_REF;
 }
 
 }

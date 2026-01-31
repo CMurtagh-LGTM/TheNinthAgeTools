@@ -2,10 +2,11 @@
 
 #include <string_view>
 #include <toml++/toml.hpp>
+#include "unit.hpp"
 
 namespace table {
 
-void add_unit(const toml::table &model_rules, const toml::table &book,
+Unit add_unit(const toml::table &rules, const toml::table &book,
                const std::string_view name);
 
 }

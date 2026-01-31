@@ -30,6 +30,14 @@ int main() {
     ap = 1
     agi = 5
     offensive_rules = ["Human", "Metal Armour"]
+    [[Marshal.offensive]]
+    name = "test"
+    att = 1
+    off = 1
+    str = 1
+    ap = 1
+    agi = 1
+    offensive_rules = ["Human", "Metal Armour"]
   )"sv;
   static constexpr auto model_rules_source = R"(
     Disciplined = "Command Tests taken by a unit containing Disciplined gain {{Minimized}}."
@@ -41,5 +49,6 @@ int main() {
     wasm::log("failed to parse toml book");
     return 0;
   }
-  table::add_unit(model_rules, book, "Marshal");
+  Unit unit = table::add_unit(model_rules, book, "Marshal");
+  std::get<reactive::Number>(unit.offenses[1].att).set(7);
 }

@@ -22,14 +22,18 @@ void log(int number);
 
 class TableRef {
 public:
+    static constexpr size_t NULL_REF = 0xFFFFFFFF;
+
+    TableRef();
     TableRef(externref_t ref);
     ~TableRef();
     TableRef(const TableRef&) = delete;
-    TableRef(TableRef&&) = delete;
+    TableRef(TableRef&& other);
     TableRef& operator=(const TableRef&) = delete;
-    TableRef& operator=(TableRef&&) = delete;
+    TableRef& operator=(TableRef&& other);
 
     externref_t operator*();
+    operator bool() const;
 private:
     size_t index;
 };
