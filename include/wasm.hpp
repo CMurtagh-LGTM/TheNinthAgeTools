@@ -20,4 +20,22 @@ void log(const char* string, size_t length);
 void log(const std::string_view string);
 void log(int number);
 
+class TableRef {
+public:
+    TableRef(externref_t ref);
+    ~TableRef();
+    TableRef(const TableRef&) = delete;
+    TableRef(TableRef&&) = delete;
+    TableRef& operator=(const TableRef&) = delete;
+    TableRef& operator=(TableRef&&) = delete;
+
+    externref_t operator*();
+private:
+    size_t index;
+};
+
+int alloc_ref();
+void set_ref(int index, externref_t r);
+externref_t get_ref();
+
 }

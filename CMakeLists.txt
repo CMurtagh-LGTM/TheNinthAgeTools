@@ -19,6 +19,7 @@ add_executable(listgen
     src/wasm.cpp
     src/dom.cpp
     src/table.cpp
+    src/reactive.cpp
 )
 target_include_directories(listgen PUBLIC include)
 target_compile_options(listgen PRIVATE -Wall -Wextra -Wpedantic -flto -fno-exceptions -O3)

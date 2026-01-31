@@ -5,6 +5,7 @@
 #include <toml++/toml.hpp>
 
 #include "dom.hpp"
+#include "reactive.hpp"
 
 namespace table {
 

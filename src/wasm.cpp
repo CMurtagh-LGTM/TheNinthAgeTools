@@ -1,6 +1,11 @@
 #include "wasm.hpp"
 
+#include <cassert>
 #include <string>
+
+static externref_t ref_table[0];
+static size_t next_free = 0;
+static std::vector<bool> used_elements = {false};
 
 namespace wasm {
 
@@ -31,6 +36,36 @@ void log(const std::string_view string) {
 }
 void log(int number){
   wasm::log(int_to_string(number));
+}
+
+TableRef::TableRef(externref_t externref) {
+  index = next_free;
+  assert(!used_elements[index]);
+  used_elements[index] = true;
+  do {
+    next_free++;
+    if (used_elements.size() < next_free) {
+      used_elements.push_back(false);
+      break;
+    }
+  } while(used_elements[next_free]);
+
+  if ( __builtin_wasm_table_size(ref_table) <= index ) {
+    __builtin_wasm_table_grow(ref_table, externref, index + 1);
+  }
+    
+  __builtin_wasm_table_set(ref_table, index, externref);
+}
+
+TableRef::~TableRef() {
+  used_elements[index] = false;
+  next_free = std::min(next_free, index);
+}
+
+externref_t TableRef::operator*() {
+  externref_t retval = __builtin_wasm_table_get(ref_table, index);
+
+  return retval;
 }
 
 }
