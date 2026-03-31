@@ -11,6 +11,11 @@
     return string;
   }
 
+  function call_slot(instance, index) {
+    instance.exports.call_slot(index);
+  }
+
+
   async function init() {
     let memory_buffer;
     const { instance } = await WebAssembly.instantiateStreaming(
@@ -30,6 +35,9 @@
           add_class(node, offset, size) {
             node.classList.add(c_string(memory_buffer, offset, size));
           },
+          set_visible(node, visible) {
+            node.style.display = visible ? "block" : "none"
+          },
           append_child(node_parent, offset, size) {
             let node = document.createElement(c_string(memory_buffer, offset, size));
             node_parent.appendChild(node);
@@ -45,6 +53,11 @@
             node.popoverTargetElement = popover;
           },
         },
+        input: {
+          add_click_listener(node, index) {
+            node.addEventListener("click", call_slot.bind(null, instance, index));
+          }
+        },
         wasi_snapshot_preview1: {
           environ_get (arg1, arg2) {},
           environ_sizes_get (arg1, arg2) {},
@@ -55,14 +68,14 @@
           fd_write(arg1, arg2, arg3, arg4) {},
           proc_exit(arg) {},
         },
-      },
-      {
-        builtins: ["js-string"],
-      },
+      }
     );
 
     memory_buffer = instance.exports.memory.buffer;
-    instance.exports._start();
+
+    instance.exports.wwwwwwww(7);
+    instance.exports.wwwwwwww(8);
+    instance.exports.wwwwwwww(9);
   }
   init();
 </script>

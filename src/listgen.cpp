@@ -1,6 +1,9 @@
+#include "input.hpp"
 #include "wasm.hpp"
 
 #include "table.hpp"
+
+#include "the_ninth_age_tools_cpp.h"
 
 #include <string_view>
 #include <toml++/toml.hpp>
@@ -63,19 +66,43 @@ int main() {
     offensive_rules = ["Human", "Metal Armour"]
 
   )"sv;
+
   static constexpr auto model_rules_source = R"(
     Disciplined = "Command Tests taken by a unit containing Disciplined gain {{Minimized}}."
     Minimized = "For each instance of Minimised, add a dice to the roll, and discard the dice that rolled the highest result."
-    "Parent Unit" = "A unit containing a model with this rule is referred to as a ‘Parent Unit’. Parent Unit gains {{Fight in Extra Rank}} while there is at least one {{Support Unit}} engaged in the same combat."
+    "Parent Unit" = "A unit containing a model with this rule is referred to as a 'Parent Unit'. Parent Unit gains {{Fight in Extra Rank}} while there is at least one {{Support Unit}} engaged in the same combat."
     "Support Unit" = "-"
     "Fight in Extra Rank" = "A model part with Fight in Extra Rank, or using a weapon with Fight in Extra Rank, can make Supporting Attacks from one additional rank."
   )"sv;
+
+  static constexpr auto list_source = R"(
+    [[List]]
+    name = "Marshal"
+    [[List]]
+    name = "State Infantry"
+    [[List]]
+    name = "State Infantry"
+  )"sv;
+
   auto book = toml::parse(source);
+  auto list = toml::parse(list_source);
   auto model_rules = toml::parse(model_rules_source);
   if (!book) {
     wasm::log("failed to parse toml book");
     return 0;
   }
-  // table::add_unit(model_rules, book, "Marshal");
-  table::add_unit(model_rules, book, "State Infantry");
+
+  // auto content = dom::get_by_id("content");
+
+  if (const toml::array* list_array = list["List"].as_array()) {
+    for (auto&& list_entry: *list_array) {
+      const toml::node_view<const toml::node>& view =
+          static_cast<const toml::node_view<const toml::node>>(list_entry);
+      // table::add_unit(content, model_rules, book, view["name"].value_or(""));
+    }
+  }
+
+  input::internal::wwwwwwww(0);
+
+  auto a = webidl::browser::default_::GetWindow();
 }

@@ -1,6 +1,5 @@
 #include "wasm.hpp"
 
-#include <cassert>
 #include <string>
 
 static externref_t ref_table[0];
@@ -29,7 +28,8 @@ std::string int_to_string(int number) {
 }
 
 void log(const char* string, size_t length) {
-  internal::log(string, length);
+  // internal::log(string, length);
+  // Console::log();
 }
 void log(const std::string_view string) {
   wasm::log(string.data(), string.length());
@@ -38,17 +38,22 @@ void log(int number){
   wasm::log(int_to_string(number));
 }
 
+void wasm_assert(bool predicate, const std::string_view message) {
+  if (!predicate) {
+    log(message);
+  }
+}
 
 TableRef::TableRef(): index(NULL_REF) {
 }
 
 TableRef::TableRef(externref_t externref) {
   index = next_free;
-  assert(!used_elements[index]);
+  wasm_assert(!used_elements[index], "table tried to allocate a existing slot");
   used_elements[index] = true;
   do {
     next_free++;
-    if (used_elements.size() < next_free) {
+    if (used_elements.size() <= next_free) {
       used_elements.push_back(false);
       break;
     }
@@ -60,7 +65,6 @@ TableRef::TableRef(externref_t externref) {
     
   __builtin_wasm_table_set(ref_table, index, externref);
 }
-
 
 TableRef::TableRef(TableRef&& other) : index(other.index) {
   other.index = NULL_REF;
@@ -78,10 +82,12 @@ TableRef::~TableRef() {
   }
   used_elements[index] = false;
   next_free = std::min(next_free, index);
+  index = NULL_REF;
 }
 
 externref_t TableRef::operator*() {
-  assert(index != NULL_REF);
+  wasm_assert(index != NULL_REF,  "table tried to dereference null_ref");
+  wasm_assert(used_elements[index],  "table tried to dereference a free slot");
   externref_t retval = __builtin_wasm_table_get(ref_table, index);
 
   return retval;

@@ -1,8 +1,12 @@
 *.wasm
 *.o
 *.png
+*.pyc
 
 wasi-sdk/*
+browser.wit/*
+webidl2wit/*
+wit-bindgen/*
 build_wasm/*
 build_linux/*
 .cache/

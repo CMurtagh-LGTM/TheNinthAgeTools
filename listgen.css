@@ -16,6 +16,10 @@
   font-weight: bold;
 }
 
+table {
+  width: 100%;
+}
+
 .header_tr {
   background-color: lightgrey;
   color: grey;

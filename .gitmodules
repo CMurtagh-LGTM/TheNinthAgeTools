@@ -1,0 +1,3 @@
+[submodule "browser.wit"]
+	path = browser.wit
+	url = git@github.com:MendyBerger/browser.wit.git

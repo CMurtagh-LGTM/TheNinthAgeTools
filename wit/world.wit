@@ -1,0 +1,5 @@
+package cmurtagh:the-ninth-age-tools;
+
+world the-ninth-age-tools {
+    import webidl:browser/default;
+}
